@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caldera Landing Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    .btn-grad {
+      background: linear-gradient(90deg, #0e00ff, #0a0ade, #00d4ff);
+      color: white;
+      border: none;
+    }
+    .text-title {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(75deg, #0e00ff, #0a0ade, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section { padding: 80px 0; }
+    footer a { text-decoration: none; }
+  </style>
+</head>
+<body class="bg-light">
+
+<!-- HEADER -->
+<header class="bg-white shadow-sm py-3 sticky-top">
+  <div class="container d-flex justify-content-between align-items-center">
+    <img src="assets/logo.png" alt="Caldera Logo" height="60">
+    <nav>
+      <a href="#produk" class="btn btn-outline-primary me-2">Produk</a>
+      <a href="#testimoni" class="btn btn-outline-primary me-2">Testimoni</a>
+      <a href="#hub" class="btn btn-outline-primary me-2">Caldera Hub</a>
+      <a href="login.html" class="btn btn-outline-secondary">Login</a>
+    </nav>
+  </div>
+</header>
+
+<!-- GRAPHIC BUTTONS -->
+<div class="bg-white py-2 border-bottom">
+  <div class="container d-flex justify-content-center gap-3">
+    <a href="#tool" class="btn btn-grad">Kenali Dirimu Sekarang</a>
+    <a href="#login" class="btn btn-outline-secondary">Sign In</a>
+    <a href="#contact" class="btn btn-outline-dark">Contact Us</a>
+  </div>
+</div>
+
+<!-- SLIDER SECTION -->
+<section class="section bg-white">
+  <div id="slider" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner text-center">
+      <div class="carousel-item active"><h2>Exploring Your Potential: Prepare for the Future of Work</h2><a href="#tool" class="btn btn-grad mt-3">Kenali Dirimu</a></div>
+      <div class="carousel-item"><h2>Discover Your Strengths - Gen Z Career Journey</h2><a href="#tool" class="btn btn-grad mt-3">Kenali Dirimu</a></div>
+      <div class="carousel-item"><h2>Overcome Gen Z Culture Gaps in the Workplace</h2><a href="#tool" class="btn btn-grad mt-3">Kenali Dirimu</a></div>
+      <div class="carousel-item"><h2>Industry Revolution 5.0 & AEC 2015 Challenges</h2><a href="#tool" class="btn btn-grad mt-3">Kenali Dirimu</a></div>
+      <div class="carousel-item"><h2>Kenali Potensi & Siapkan Diri Bersaing</h2><a href="#tool" class="btn btn-grad mt-3">Kenali Dirimu</a></div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#slider" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#slider" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section class="section bg-light text-center">
+  <div class="container">
+    <h2>Apa Itu Caldera?</h2>
+    <p>Caldera menyediakan tools pengenalan diri, persiapan kerja, dan solusi atas gap budaya antar generasi di dunia profesional.</p>
+  </div>
+</section>
+
+<!-- VISI MISI + VIDEO -->
+<section class="section bg-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Vision</h3>
+        <p>Menjadi mitra terpercaya dalam pengembangan karir dan transisi profesional yang strategis, membantu individu mengaktualisasikan potensi terbaik mereka untuk kehidupan yang lebih produktif dan bermakna, serta memastikan perusahaan mendapatkan tenaga kerja berkualitas.</p>
+        <h3>Mission</h3>
+        <p>Menyediakan layanan pendampingan strategis bagi individu untuk merancang dan mengembangkan karir secara optimal. Membantu klien mengaktualisasikan potensi terbaiknya melalui pendekatan berbasis data dan pemetaan talenta. Menawarkan program perencanaan karir lanjutan, termasuk transisi ke masa pensiun yang produktif dan bernilai. Mengembangkan metode dan teknologi inovatif untuk mendukung pengambilan keputusan karir berbasis analisis yang akurat. Menjadi jembatan antara individu dan peluang terbaik, baik untuk pengembangan diri maupun kebutuhan tenaga kerja berkualitas bagi perusahaan. Bekerja sama dengan perusahaan untuk memastikan SDM yang mereka rekrut telah melalui proses asesmen dan pendampingan yang terarah sesuai kebutuhan bisnis.</p>
+      </div>
+      <div class="col-md-6">
+        <video src="assets/intro.mp4" controls class="w-100 mb-3"></video>
+        <img src="assets/about.jpg" alt="About Image" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SELF-DISCOVERY TOOL -->
+<section class="section bg-light" id="tool">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <h2>Self-Discovery Tool</h2>
+        <p>Isi kuesioner, pahami kekuatanmu, dan dapatkan laporan lengkap langsung ke WhatsApp & Email kamu. Skala penilaian dari "Gue Banget" sampai "Bukan Gue Banget".</p>
+        <ul>
+          <li>Pendaftaran</li>
+          <li>Isi Kuesioner</li>
+          <li>Laporan dikirim</li>
+          <li>Siap kerja!</li>
+        </ul>
+        <p><strong>Harga:</strong> Mulai dari Rp50.000 (QRIS, GoPay, OVO)</p>
+        <video src="assets/tool-guide.mp4" controls class="w-100"></video>
+      </div>
+      <div class="col-md-3 d-flex align-items-center">
+        <a href="#" class="btn btn-grad btn-lg w-100">Mulai Assessment</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF & REFERRAL -->
+<section class="section bg-white" id="testimoni">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Testimoni</h3>
+        <p>"Sangat membantu! Saya lebih yakin menapaki karir." – Rina</p>
+        <p>Program referral: Ajak teman dan dapatkan akses premium!</p>
+      </div>
+      <div class="col-md-6">
+        <h3>Blog & Artikel</h3>
+        <p><strong>Gen Z & Dunia Kerja</strong> - Kenali tantangan dan cara adaptasinya.</p>
+        <a href="#tool" class="btn btn-outline-primary">Coba Tools Self-Discovery</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUK -->
+<section class="section bg-light" id="produk">
+  <div class="container text-center">
+    <h2>Produk Kami</h2>
+    <p>Self Test Discover, Caldera 20S, Modular, Road to Work Assistant</p>
+    <a href="#contact" class="btn btn-grad">Hubungi Kami</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-dark text-white py-5" id="contact">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h5>Lokasi</h5>
+        <p>Jl. Caldera Raya No.123<br><a href="#" class="text-white">Lihat di Maps</a></p>
+      </div>
+      <div class="col-md-4">
+        <h5>Kontak</h5>
+        <p>Email: info@caldera.co.id<br>Live Chat via <a href="#" class="text-white">WhatsApp</a></p>
+        <form class="mt-3">
+          <input type="email" class="form-control mb-2" placeholder="Email kamu">
+          <button class="btn btn-outline-light w-100">Daftar Newsletter</button>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <h5>Sosial Media</h5>
+        <a href="#" class="text-white d-block">Instagram</a>
+        <a href="#" class="text-white d-block">LinkedIn</a>
+        <a href="#" class="text-white d-block">Facebook</a>
+      </div>
+    </div>
+    <div class="text-center mt-4">&copy; 2025 Caldera. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

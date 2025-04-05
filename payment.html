@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QRIS Payment Example</title>
+
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet"
+  />
+  <!-- SweetAlert (optional untuk notifikasi) -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .qris-image {
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container my-5">
+  <h2 class="mb-4">Pembayaran dengan QRIS Statis</h2>
+
+  <!-- STEP 1: Informasi Pembayaran -->
+  <div id="step1" class="card p-4 mb-3">
+    <h5 class="mb-3">Informasi Pembayaran</h5>
+    <p>
+      <strong>Invoice Kepada</strong> <span id="info"></span>
+    </p>
+    <!-- No. Document & Invoice -->
+    <p><strong>No. Document:</strong> <span id="docNumberDisplay">-</span></p>
+    <p><strong>No. Invoice:</strong> <span id="invoiceNumberDisplay">-</span></p>
+    <!-- Harga awal -->
+    <p>Biaya: <strong id="baseAmountDisplay"></strong> (belum termasuk kode unik)</p>
+    <!-- Tempat menampilkan countdown diskon -->
+    <p id="discountCountdown" class="text-danger"></p>
+    
+    <button id="btnGenerate" class="btn btn-primary w-100">Generate Payment</button>
+  </div>
+
+  <!-- STEP 2: Tampilkan QRIS & Total Pembayaran -->
+  <div id="step2" class="card p-4 mb-3" style="display: none;">
+    <h5 class="mb-3">Silakan Scan QR Code</h5>
+    <!-- Gambar QR (dummy) -->
+    <img 
+      id="qrImage"
+      src="https://img.freepik.com/free-vector/scan-me-qr-code_78370-2915.jpg" 
+      alt="QRIS Dummy" 
+      class="qris-image mb-3"
+    />
+    <p>
+      <strong>Keterangan:</strong><br />
+      - Jika Anda menggunakan <b>ponsel</b>, Anda bisa <b>screenshot</b> atau tekan tombol 
+      <em>Download QR</em> untuk menyimpan gambar ini, lalu membukanya dengan 
+      aplikasi pembayaran yang mendukung QRIS.<br/>
+      - Jika menggunakan <b>laptop/PC</b>, silakan <b>scan</b> langsung dari aplikasi 
+      pembayaran di HP Anda.
+    </p>
+    <!-- Tombol Download QR -->
+    <a id="btnDownloadQr" download="qris.png" class="btn btn-outline-secondary mb-3">
+      Download QR
+    </a>
+    <p class="mt-2">
+      LAKUKAN PEMBAYARAN TERLEBIH DAHULU, SETELAH ITU KLIK TOMBOL 
+      <strong>“KONFIRMASI PEMBAYARAN”</strong> 
+      <strong id="finalAmountDisplay"></strong>
+    </p>
+    <div class="mb-3">
+      <button id="btnCopyAmount" class="btn btn-warning">COPY JUMLAH TAGIHAN</button>
+    </div>
+    <button id="btnConfirm" class="btn btn-success w-100">Konfirmasi Pembayaran</button>
+  </div>
+</div>
+
+<!-- Script axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  // Ambil data user (nama, email, phone) dari API
+  const userId2 = localStorage.getItem('caldera_user_id');
+  axios.get(`https://storage-api.online/api-caldera/public/api/user-info/${userId2}`)
+    .then(res => {
+      document.querySelector("#info").innerHTML = 
+        res.data.user.name + " | " + res.data.user.email + " | " + res.data.user.phone;
+    });
+
+  // Variabel dan elemen yang sering digunakan
+  const btnCopyAmount = document.getElementById('btnCopyAmount');
+  let finalAmount = 0; // total bayar (biaya efektif + kode unik)
+  let kode = 0;      // kode unik 3 digit
+
+  // Ambil nilai "harga" dari URL parameter, misal: ?harga=350000 atau ?harga=250000
+  const urlParams = new URLSearchParams(window.location.search);
+  let baseAmount = urlParams.get('harga');
+  if (!baseAmount || isNaN(baseAmount)) {
+    baseAmount = 100000;
+  } else {
+    baseAmount = parseInt(baseAmount);
+  }
+
+  // Elemen DOM
+  const baseAmountDisplay     = document.getElementById('baseAmountDisplay');
+  const docNumberDisplay      = document.getElementById('docNumberDisplay');
+  const invoiceNumberDisplay  = document.getElementById('invoiceNumberDisplay');
+  const step1                 = document.getElementById('step1');
+  const step2                 = document.getElementById('step2');
+  const finalAmountDisplay    = document.getElementById('finalAmountDisplay');
+  const btnGenerate           = document.getElementById('btnGenerate');
+  const btnConfirm            = document.getElementById('btnConfirm');
+  const qrImage               = document.getElementById('qrImage');
+  const btnDownloadQr         = document.getElementById('btnDownloadQr');
+  const discountCountdownEl   = document.getElementById('discountCountdown');
+
+  // Tampilkan baseAmount awal
+  baseAmountDisplay.textContent = `Rp ${baseAmount.toLocaleString()}`;
+
+  // Fungsi untuk generate docNumber & invoiceNumber
+  function generateDocNumber() {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    return `DOC-${randomNum}`;
+  }
+  function generateInvoiceNumber() {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    return `INV-${randomNum}`;
+  }
+  const docNo = generateDocNumber();
+  const invoiceNo = generateInvoiceNumber();
+  docNumberDisplay.textContent = docNo;
+  invoiceNumberDisplay.textContent = invoiceNo;
+
+  // Pengaturan promo: jika baseAmount adalah 350000, promo berlaku
+  let effectiveBaseAmount = baseAmount; // nilai dasar yang akan digunakan
+  let discountTimerInterval = null;
+  if (baseAmount === 350000) {
+    // Durasi diskon 3 jam (3 * 60 * 60 * 1000 ms)
+    const discountDuration = 3 * 60 * 60 * 1000;
+    let discountEnd = localStorage.getItem("claimPromoEnd");
+    if (!discountEnd) {
+      discountEnd = new Date().getTime() + discountDuration;
+      localStorage.setItem("claimPromoEnd", discountEnd);
+    } else {
+      discountEnd = parseInt(discountEnd);
+    }
+    discountTimerInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const diff = discountEnd - now;
+      if (diff > 0) {
+        // Selama promo aktif, harga efektif adalah Rp 250.000
+        effectiveBaseAmount = 250000;
+        // Tampilkan harga dengan coret (Rp 350,000) dan harga diskon (Rp 250,000)
+        baseAmountDisplay.innerHTML = '<del>Rp 350,000</del> Rp 250,000';
+        let seconds = Math.floor((diff / 1000) % 60);
+        let minutes = Math.floor((diff / (1000 * 60)) % 60);
+        let hours = Math.floor(diff / (1000 * 60 * 60));
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        discountCountdownEl.textContent = `Diskon aktif: Harga Rp 250,000, sisa waktu: ${hours}:${minutes}:${seconds}`;
+      } else {
+        // Jika promo berakhir, harga kembali normal Rp 350,000
+        effectiveBaseAmount = 350000;
+        baseAmountDisplay.textContent = 'Rp 350,000';
+        discountCountdownEl.textContent = "Diskon telah berakhir. Harga normal: Rp 350,000";
+        clearInterval(discountTimerInterval);
+      }
+    }, 1000);
+  } else {
+    effectiveBaseAmount = baseAmount;
+    discountCountdownEl.textContent = "";
+  }
+
+  // Tombol "Generate Payment"
+  btnGenerate.addEventListener('click', () => {
+    // Buat kode unik 3 digit (antara 100-999)
+    const uniqueCode = Math.floor(Math.random() * 900) + 100;
+    kode = uniqueCode;
+    // Hitung total pembayaran = harga efektif + kode unik
+    finalAmount = effectiveBaseAmount + uniqueCode;
+    // Pindah ke Step 2
+    step1.style.display = 'none';
+    step2.style.display = 'block';
+    // Tampilkan total pembayaran
+    finalAmountDisplay.textContent = `Rp ${finalAmount.toLocaleString()}`;
+  });
+
+  // Tombol Copy Jumlah Tagihan
+  btnCopyAmount.addEventListener('click', () => {
+    const textToCopy = finalAmount.toString();
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        swal("Tersalin!", `Jumlah tagihan Rp ${finalAmount.toLocaleString()} telah disalin ke clipboard.`, "success");
+      })
+      .catch(() => {
+        swal("Gagal", "Gagal menyalin jumlah tagihan. Coba lagi.", "error");
+      });
+  });
+
+  // Tombol Download QR (link dummy)
+  btnDownloadQr.href = "https://img.freepik.com/free-vector/scan-me-qr-code_78370-2915.jpg";
+
+  // Tombol "Konfirmasi Pembayaran"
+  btnConfirm.addEventListener('click', () => {
+    const userId = localStorage.getItem('caldera_user_id');
+    if (!userId) {
+      swal("Error", "User ID tidak ditemukan, silakan login kembali!", "error");
+      return;
+    }
+    axios.get(`https://storage-api.online/api-caldera/public/api/user-info/${userId}`)
+      .then((res) => {
+        const user = res.data.user || {};
+        const data = {
+          service_id: 'service_0p6ss8i',
+          template_id: 'template_3lrs5os',
+          user_id: 'p2G9APNe7wseqydyU',
+          template_params: {
+            'name': user.name,
+            'email': user.email,
+            'inv': invoiceNo,
+            'doc': docNo,
+            'kode': kode,
+            'harga': effectiveBaseAmount, // gunakan harga dasar efektif
+            'g-recaptcha-response': '03AHJ_ASjnLA214KSNKFJAK12sfKASfehbmfd...'
+          }
+        };
+        axios.post('https://api.emailjs.com/api/v1.0/email/send', data)
+          .then(() => {
+            swal(
+              "Berhasil!", 
+              `Pembayaran sebesar Rp ${finalAmount.toLocaleString()} telah dikonfirmasi.`,
+              "success"
+            )
+            .then(() => {
+              window.location.replace("result.html?payment=true");
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            swal("Gagal!", "Terjadi kesalahan saat mengirim email konfirmasi.", "error");
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+        swal("Error", "Gagal mendapatkan data user.", "error");
+      });
+  });
+</script>
+
+<!-- Bootstrap Bundle JS -->
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+</body>
+</html>

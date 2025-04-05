@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pilihan Karakteristik 4 Tahap</title>
+
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- SweetAlert -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    .instruction-box {
+      background-color: #27c6e6;
+      color: #fff;
+      padding: 10px 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .instruction-box p {
+      margin: 5px 0;
+    }
+
+    .instruction-box p::before {
+      content: '☑'; 
+      margin-right: 8px;
+    }
+
+    .step-container { 
+      display: none; 
+    }
+    .step-container.active { 
+      display: block; 
+    }
+
+    .hidden-checkbox {
+      display: none;
+    }
+
+    .custom-checkbox {
+      position: relative;
+      padding-left: 40px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      transition: background-color 0.2s;
+    }
+
+    /* Kotak kosong sebelum dicentang */
+    .custom-checkbox label::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 14px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background-color: transparent;
+      border: 2px solid #ccc;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    /* Centang putih */
+    .custom-checkbox.checked label::after {
+      content: "✔";
+      position: absolute;
+      left: 13px;
+      top: 10px;
+      font-size: 14px;
+      color: white;
+    }
+
+    /* STEP 1 — Paling Cocok */
+    .custom-checkbox.step1.checked label {
+      color: #e64a19;
+    }
+    .custom-checkbox.step1.checked label::before {
+      background-color: #e64a19;
+      border-color: #e64a19;
+    }
+
+    /* STEP 2 — Paling Tidak Cocok */
+    .custom-checkbox.step2.checked label {
+      color: #0a0a0a;
+    }
+    .custom-checkbox.step2.checked label::before {
+      background-color: #0a0a0a;
+      border-color: #0a0a0a;
+    }
+
+    /* STEP 3 — Cocok */
+    .custom-checkbox.step3.checked label {
+      color: #f9a825;
+    }
+    .custom-checkbox.step3.checked label::before {
+      background-color: #f9a825;
+      border-color: #f9a825;
+    }
+
+    /* STEP 4 — Tidak Cocok */
+    .custom-checkbox.step4.checked label {
+      color: #757171;
+    }
+    .custom-checkbox.step4.checked label::before {
+      background-color: #757171;
+      border-color: #757171;
+    }
+
+    /* Spinner disembunyikan awalnya */
+    #spinner {
+      display: none;
+    }
+    
+    .navs {
+        top: 0;left: 0;right: 0;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-4">
+
+  <!-- SPINNER LOADING -->
+  <div id="spinner" class="text-center mb-4">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Pilih "Memilih Yg Paling cocok" -->
+  <div id="step1" class="step-container active">
+    <h1 class="text-center">MEMILIH YANG PALING COCOK</h1>
+    <div class="instruction-box text-start">
+      <p>Pilihlah 5 s/d 7 pernyataan yang menurut anda <strong>Paling</strong> sesuai dengan diri anda</p>
+      <p>Pilihlah dengan cara mengklik kotak di samping kiri pernyataan</p>
+      <p>Setelah selesai memilih silahkan klik <strong>Next</strong></p>
+    </div>
+    <div class="navs"><button id="btnStep1Next" class="btn btn-primary me-3">NEXT</button><p id="counterText1" class="m-0 p-0">Tercentang: 0 / 7</p></div>
+    <div class="row g-3" id="step1Container">
+      <!-- Daftar item untuk step 1 akan di-generate di JS -->
+    </div>
+    <!--<div class="mt-3">-->
+    <!--</div>-->
+  </div>
+
+  <!-- STEP 2: Pilih "Paling Tidak Cocok" -->
+  <div id="step2" class="step-container">
+    <h1 class="text-center">MEMILIH YANG PALING TIDAK COCOK</h1>
+    <div class="instruction-box text-start">
+      <p>Pilihlah 5 s/d 7 pernyataan yang menurut anda <strong>Paling</strong> tidak cocok dengan diri anda</p>
+      <p>Pilihlah dengan cara mengklik kotak di samping kiri pernyataan</p>
+      <p>Setelah selesai memilih silahkan klik <strong>Next</strong></p>
+    </div>
+    <div class="navs"><button id="btnStep2Next" class="btn btn-primary me-3">NEXT</button><p id="counterText2" class="m-0 p-0">Tercentang: 0 / 7</p></div>
+    <div class="row g-3" id="step2Container">
+      <!-- Daftar item sisa untuk step 2 -->
+    </div>
+    <!--<div class="mt-3">-->
+    <!--</div>-->
+  </div>
+
+  <!-- STEP 3: Pilih "Cocok" -->
+  <div id="step3" class="step-container">
+    <h1 class="text-center">MEMILIH YANG COCOK</h1>
+    <div class="instruction-box text-start">
+      <p>Pilihlah 5 s/d 7 pernyataan yang menurut anda <strong>Cocok</strong> dengan diri anda</p>
+      <p>Pilihlah dengan cara mengklik kotak di samping kiri pernyataan</p>
+      <p>Setelah selesai memilih silahkan klik <strong>Next</strong></p>
+    </div>
+    <div class="navs"><button id="btnStep3Next" class="btn btn-primary me-3">NEXT</button><p id="counterText3" class="m-0 p-0">Tercentang: 0 / 7</p></div>
+    <div class="row g-3" id="step3Container">
+      <!-- Daftar item sisa untuk step 3 -->
+    </div>
+    <!--<div class="mt-3">-->
+    <!--</div>-->
+  </div>
+
+  <!-- STEP 4: Pilih "Tidak Cocok" -->
+  <div id="step4" class="step-container">
+    <h1 class="text-center">MEMILIH YANG TIDAK COCOK</h1>
+    <div class="instruction-box text-start">
+      <p>Pilihlah 5 s/d 7 pernyataan yang menurut anda <strong>Tidak</strong> cocok dengan diri anda</p>
+      <p>Pilihlah dengan cara mengklik kotak di samping kiri pernyataan</p>
+      <p>Setelah selesai memilih silahkan klik <strong>Finish</strong></p>
+    </div>
+    <div class="navs"><button id="btnFinish" class="btn btn-success me-3">Finish</button><p id="counterText4" class="m-0 p-0">Tercentang: 0 / 7</p></div>
+    <div class="row g-3" id="step4Container">
+      <!-- Daftar item sisa untuk step 4 -->
+    </div>
+    <!--<div class="mt-3">-->
+    <!--</div>-->
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Ambil SEMUA elemen dengan class .navs
+    const navsList = document.querySelectorAll('.navs');
+
+    // Pada awal, jadikan semuanya "position: static"
+    navsList.forEach(navs => {
+      navs.style.position = 'static';
+      navs.style.background = 'transparent';
+      navs.style.borderBottom = 'none';
+      navs.style.padding = 0;
+    });
+
+    // Ketika user scroll, ubah style pada semua elemen .navs
+    window.addEventListener('scroll', function() {
+      navsList.forEach(navs => {
+        if (window.scrollY >= 250) {
+          navs.style.position = 'fixed';
+          navs.style.background = 'white';
+          navs.style.borderBottom = '1px solid #D9D9D9';
+          navs.style.padding = '10px 16%';
+          navs.style.zIndex = '999';
+        } else {
+          navs.style.position = 'static';
+          navs.style.background = 'transparent';
+          navs.style.borderBottom = 'none';
+          navs.style.padding = 0;
+        }
+      });
+    });
+  });
+</script>
+
+
+<script>
+  // -----------------------------------------------------------
+  // DATA UTAMA
+  // -----------------------------------------------------------
+  const allItems = [
+    { code: "ADM",  text: "Pengelola urusan bisnis, organisasi, atau lembaga yang rapi dan baik" },
+    { code: "AMB",  text: "Menjadi perwakilan dari suatu organisasi/institusi (resmi/tidak resmi)" },
+    { code: "ANA",  text: "Penggemar hal-hal detail, selalu melakukan analisa terhadap berbagai peristiwa" },
+    { code: "ARR",  text: "Mudah mengorganisir berbagai hal atau sumber daya yang dimiliki" },
+    { code: "CAR",  text: "Menyukai aktivitas merawat, mendukung, atau membantu orang lain" },
+    { code: "CMD",  text: "Gemar memberi perintah dan berani menghadapi masalah secara langsung" },
+    { code: "COM",  text: "Mampu menyampaikan informasi, ide, perasaan secara mudah dimengerti" },
+    { code: "CRE",  text: "Senang atau mampu menciptakan sesuatu yang baru (penulis, ilmuwan, dsb.)" },
+    { code: "DES",  text: "Bisa membayangkan dan menggambar rancangan sesuatu" },
+    { code: "DIS",  text: "Mampu mendistribusikan (membagi/mengirim) barang ke orang/tujuan tertentu" },
+    { code: "EDU",  text: "Berperan dalam merencanakan, mengarahkan, dan melaksanakan pendidikan" },
+    { code: "EVA",  text: "Mampu membuat studi/analisis mendalam dan mengambil kesimpulan" },
+    { code: "EXP",  text: "Mampu menyelidiki sesuatu secara sistematis, menyingkap kebenaran" },
+    { code: "INT",  text: "Mampu menginterpretasikan sesuatu, termasuk menerjemahkannya ke bahasa lain" },
+    { code: "JOU",  text: "Membuat catatan kejadian (laporan, jurnal, berita) untuk dipublikasikan" },
+    { code: "MAR",  text: "Mampu merumuskan strategi pemasaran agar orang membeli lebih banyak" },
+    { code: "MED",  text: "Menjadi penengah/mediator untuk menyelesaikan konflik dua pihak" },
+    { code: "MOT",  text: "Membuat orang lain bersemangat/tertarik untuk melakukan sesuatu" },
+    { code: "OPE",  text: "Mengoperasikan dan menjaga mesin/peralatan" },
+    { code: "PRO",  text: "Menghasilkan produk (industri/manufaktur)" },
+    { code: "QCA",  text: "Memastikan kualitas produk baik (quality control/assurance)" },
+    { code: "RES",  text: "Mengembalikan keadaan menjadi normal, atau membuat lebih baik" },
+    { code: "SAF",  text: "Melindungi keselamatan atau keamanan dari kerusakan, kehilangan, dsb." },
+    { code: "SEL",  text: "Piawai meyakinkan dan mempengaruhi orang lain agar membeli" },
+    { code: "SER",  text: "Suka melayani, selalu mendahulukan kepentingan orang lain" },
+    { code: "SLC",  text: "Pandai memilih orang tepat untuk posisi/tugas tertentu" },
+    { code: "STR",  text: "Mampu melakukan perencanaan jangka panjang (strategis)" },
+    { code: "SYN",  text: "Menggabungkan berbagai ide/objek menjadi sesuatu yang baru" },
+    { code: "TRE",  text: "Pandai mengelola keuangan, pembukuan, dan akuntansi" },
+    { code: "VIS",  text: "Senang berpikir jauh ke depan melampaui cakrawala" },
+  ];
+
+  // Penampung final (akan dikirim ke server)
+  let finalChoices = [];
+
+  // Step data
+  let step1Items = [...allItems];  // data awal
+  let step2Items = [];
+  let step3Items = [];
+  let step4Items = [];
+
+  // -----------------------------------------------------------
+  // FUNGSI SPINNER
+  // -----------------------------------------------------------
+  function showSpinner() {
+    document.getElementById('spinner').style.display = 'block';
+  }
+  function hideSpinner() {
+    document.getElementById('spinner').style.display = 'none';
+  }
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // -----------------------------------------------------------
+  // Fungsi render item + handle centang
+  // -----------------------------------------------------------
+  function renderItems(containerId, items, stepNumber) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    // Tentukan stepClass
+    let stepClass = 'step' + stepNumber;
+
+    items.forEach((item, idx) => {
+      const colDiv = document.createElement('div');
+      colDiv.classList.add('col-12');
+
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('custom-checkbox', stepClass);
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.classList.add('hidden-checkbox');
+      checkbox.id = `${containerId}-item-${idx}`;
+      checkbox.dataset.index = idx;
+
+      const label = document.createElement('label');
+      label.setAttribute('for', checkbox.id);
+      label.textContent = item.text;
+
+      // Event: on change => toggle style
+      checkbox.addEventListener('change', () => {
+        wrapper.classList.toggle('checked', checkbox.checked);
+
+        // Hitung jumlah yang tercentang di container ini
+        const checkedCount = container.querySelectorAll('input[type="checkbox"]:checked').length;
+
+        // Jika user mencoba mencentang item ke-8 (artinya checkedCount = 8)
+        if (checkedCount > 7) {
+          // Batalkan centang
+          checkbox.checked = false;
+          wrapper.classList.remove('checked');
+          swal("Batas Maksimal", "Anda sudah memilih 7 item. Jika ingin memilih ini, silakan uncheck item lain dulu.", "warning");
+        }
+
+        // Update counter teks
+        updateCounter(containerId, stepNumber);
+      });
+
+      wrapper.appendChild(checkbox);
+      wrapper.appendChild(label);
+      colDiv.appendChild(wrapper);
+      container.appendChild(colDiv);
+    });
+  }
+
+  // -----------------------------------------------------------
+  // Fungsi Update Counter
+  // -----------------------------------------------------------
+  function updateCounter(containerId, stepNumber) {
+    const container = document.getElementById(containerId);
+    const counterText = document.getElementById('counterText' + stepNumber);
+
+    const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checked.length;
+
+    counterText.textContent = `Tercentang: ${count} / 7`;
+    return count;
+  }
+
+  // -----------------------------------------------------------
+  // RENDER Step per Step
+  // -----------------------------------------------------------
+  function renderStep1() {
+    renderItems('step1Container', step1Items, 1);
+  }
+  function renderStep2() {
+    renderItems('step2Container', step2Items, 2);
+  }
+  function renderStep3() {
+    renderItems('step3Container', step3Items, 3);
+  }
+  function renderStep4() {
+    renderItems('step4Container', step4Items, 4);
+  }
+
+  // -----------------------------------------------------------
+  // LOGIKA TOMBOL NEXT / FINISH
+  // -----------------------------------------------------------
+  // Step 1 Next
+  function handleStep1Next() {
+    const container = document.getElementById('step1Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    // Minimal 5
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Paling Cocok.", "error");
+      return;
+    }
+
+    // Tampilkan spinner 1 detik, lalu lanjut
+    showSpinner();
+    document.getElementById('btnStep1Next').disabled = true; // disable button agar ga double-klik
+
+    setTimeout(() => {
+      hideSpinner();
+      scrollToTop();
+
+      // Masukkan ke final => category: 'gue_banget'
+      checkedBoxes.forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        finalChoices.push({
+          code: step1Items[idx].code,
+          category: 'gue_banget'
+        });
+      });
+
+      // Sisanya ke step2
+      step2Items = step1Items.filter((_, i) => {
+        return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+      });
+
+      // Pindah Step
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('active');
+      document.getElementById('btnStep1Next').disabled = false; // re-enable (atau bisa dibiarkan)
+      renderStep2();
+    }, 1000);
+  }
+
+  // Step 2 Next
+  function handleStep2Next() {
+    const container = document.getElementById('step2Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Paling Tidak Cocok.", "error");
+      return;
+    }
+
+    showSpinner();
+    document.getElementById('btnStep2Next').disabled = true;
+
+    setTimeout(() => {
+      hideSpinner();
+      scrollToTop();
+
+      // Masukkan ke final => category: 'bukan_gue_banget'
+      checkedBoxes.forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        finalChoices.push({
+          code: step2Items[idx].code,
+          category: 'bukan_gue_banget'
+        });
+      });
+
+      // Sisanya ke step3
+      step3Items = step2Items.filter((_, i) => {
+        return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+      });
+
+      // Pindah Step
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step3').classList.add('active');
+      document.getElementById('btnStep2Next').disabled = false;
+      renderStep3();
+    }, 1000);
+  }
+
+  // Step 3 Next
+  function handleStep3Next() {
+    const container = document.getElementById('step3Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Cocok.", "error");
+      return;
+    }
+
+    showSpinner();
+    document.getElementById('btnStep3Next').disabled = true;
+
+    setTimeout(() => {
+      hideSpinner();
+      scrollToTop();
+
+      // Masukkan ke final => category: 'gue_juga'
+      checkedBoxes.forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        finalChoices.push({
+          code: step3Items[idx].code,
+          category: 'gue_juga'
+        });
+      });
+
+      // Sisanya ke step4
+      step4Items = step3Items.filter((_, i) => {
+        return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+      });
+
+      // Pindah Step
+      document.getElementById('step3').classList.remove('active');
+      document.getElementById('step4').classList.add('active');
+      document.getElementById('btnStep3Next').disabled = false;
+      renderStep4();
+    }, 1000);
+  }
+
+  // Step 4 Finish
+  function handleFinish() {
+    const container = document.getElementById('step4Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Tidak Cocok.", "error");
+      return;
+    }
+
+    // Disable tombol finish + tampilkan spinner
+    document.getElementById('btnFinish').disabled = true;
+    showSpinner();
+
+    setTimeout(() => {
+      hideSpinner();
+      scrollToTop();
+
+      // Masukkan ke final => category: 'bukan_gue'
+      checkedBoxes.forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        finalChoices.push({
+          code: step4Items[idx].code,
+          category: 'bukan_gue'
+        });
+      });
+
+      // Sisanya => biasa_aja
+      const notChecked = step4Items.filter((_, i) => {
+        return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+      });
+      notChecked.forEach(item => {
+        finalChoices.push({
+          code: item.code,
+          category: 'biasa_aja'
+        });
+      });
+
+      // Lakukan POST ke server (contoh)
+      const userId = localStorage.getItem('caldera_user_id');
+      if (!userId) {
+        swal("Error", "User belum login atau sesi expired. Silakan login ulang!", "error");
+        document.getElementById('btnFinish').disabled = false; 
+        return;
+      }
+
+      axios.post(
+        'https://storage-api.online/api-caldera/public/api/user-choices/' + userId,
+        { choices: finalChoices },
+      )
+      .then(res => {
+        swal("Success", res.data.message, "success").then(() => {
+          // Contoh redirect
+          window.location.replace("result.html");
+        });
+      })
+      .catch(err => {
+        let errMsg = "Failed to save choices.";
+        if (err.response && err.response.data) {
+          if (err.response.data.message) {
+            errMsg = err.response.data.message;
+          } else if (err.response.data.errors) {
+            errMsg = Object.values(err.response.data.errors).flat().join("\n");
+          }
+        }
+        swal("Error", errMsg, "error");
+        document.getElementById('btnFinish').disabled = false;
+      });
+    }, 1000);
+  }
+
+  // -----------------------------------------------------------
+  // Event Listener tombol Next & Finish
+  // -----------------------------------------------------------
+  document.getElementById('btnStep1Next').addEventListener('click', handleStep1Next);
+  document.getElementById('btnStep2Next').addEventListener('click', handleStep2Next);
+  document.getElementById('btnStep3Next').addEventListener('click', handleStep3Next);
+  document.getElementById('btnFinish').addEventListener('click', handleFinish);
+
+  // -----------------------------------------------------------
+  // Inisialisasi: Render Step 1
+  // -----------------------------------------------------------
+  renderStep1();
+</script>
+
+<!-- Bootstrap Bundle JS -->
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+</body>
+</html>

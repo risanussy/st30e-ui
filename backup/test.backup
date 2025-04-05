@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pilihan Karakteristik 4 Tahap</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- SweetAlert -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    .max-reached {
+      color: red;
+      font-weight: bold;
+    }
+    .step-container { display: none; }
+    .step-container.active { display: block; }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-4">
+  <h2 class="mb-4">Pilih Minimal 5 dan Maksimal 7</h2>
+
+  <!-- STEP 1: Pilih "gue_banget" -->
+  <div id="step1" class="step-container active">
+    <!-- <h4 class="mb-3">Tahap 1: Pilih Minimal 5 dan Maksimal 7 (Gue Banget)</h4> -->
+    <p id="counterText1">Tercentang: 0 / 7</p>
+    <div class="row row-cols-1 row-cols-md-2 g-3" id="step1Container">
+      <!-- Daftar item untuk step 1 akan di-generate di JS -->
+    </div>
+    <div class="mt-3">
+      <button id="btnStep1Next" class="btn btn-primary">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Pilih "bukan_gue_banget" dari sisa item -->
+  <div id="step2" class="step-container">
+    <!-- <h4 class="mb-3">Tahap 2: Pilih Minimal 5 dan Maksimal 7 (Bukan Gue Banget)</h4> -->
+    <p id="counterText2">Tercentang: 0 / 7</p>
+    <div class="row row-cols-1 row-cols-md-2 g-3" id="step2Container">
+      <!-- Daftar item sisa untuk step 2 -->
+    </div>
+    <div class="mt-3">
+      <button id="btnStep2Next" class="btn btn-primary">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Pilih "gue_juga" -->
+  <div id="step3" class="step-container">
+    <!-- <h4 class="mb-3">Tahap 3: Pilih Minimal 5 dan Maksimal 7 (Gue Juga)</h4> -->
+    <p id="counterText3">Tercentang: 0 / 7</p>
+    <div class="row row-cols-1 row-cols-md-2 g-3" id="step3Container">
+      <!-- Daftar item sisa untuk step 3 -->
+    </div>
+    <div class="mt-3">
+      <button id="btnStep3Next" class="btn btn-primary">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Pilih "bukan_gue" -->
+  <div id="step4" class="step-container">
+    <!-- <h4 class="mb-3">Tahap 4: Pilih Minimal 5 dan Maksimal 7 (Bukan Gue)</h4> -->
+    <p id="counterText4">Tercentang: 0 / 7</p>
+    <div class="row row-cols-1 row-cols-md-2 g-3" id="step4Container">
+      <!-- Daftar item sisa untuk step 4 -->
+    </div>
+    <div class="mt-3">
+      <button id="btnFinish" class="btn btn-success">Finish</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----------------------------------------------------------------
+  // Data item (code + text). Silakan sesuaikan dengan kebutuhan Anda
+  // ----------------------------------------------------------------
+  const allItems = [
+    { code: "ADM",  text: "Pengelola urusan bisnis/organisasi/lembaga yang rapi dan baik" },
+    { code: "PLK",  text: "Mampu perencanaan dari suatu organisasi/institusi, resmi/tidak resmi" },
+    { code: "ANL",  text: "Pengenal hal-hal detail, selalu melakukan analisa beragam peristiwa" },
+    { code: "ORG",  text: "Mampu mengorganisir berbagai hal atau sumber daya yang dimiliki" },
+    { code: "CRD",  text: "Menarik diikuti ketika memberi perintah atau arahan" },
+    { code: "CMN",  text: "Gemar memberi perintah, kadang memaksa, & berkomunikasi efektif" },
+    { code: "SBR",  text: "Pendengar yang baik, sabar menampung informasi, ide, dan perasaan" },
+    { code: "ARB",  text: "Mengarahkan orang lain pada hal baru (seni, budaya, dsb.)" },
+    { code: "INO",  text: "Mampu berinovasi atau melakukan penemuan (inovatif)" },
+    { code: "AGR",  text: "Mampu berperan dalam merencanakan & mengembangkan pertanian, dsb." },
+    { code: "BNT",  text: "Mampu mengarahkan bantuan, menciptakan kondisi tim berprestasi" },
+    { code: "SRN",  text: "Mampu menafsirkan perasaan/situasi, menyediakan saran/solusi" },
+    { code: "LPR",  text: "Mampu menulis jurnal, laporan, atau berita untuk disebarluaskan" },
+    { code: "KFL",  text: "Menganalisa konflik & menyelesaikan masalah/adu pendapat" },
+    { code: "PTN",  text: "Mampu menganalisa potensi diri sendiri, teman, keluarga, dsb." },
+    { code: "PRD",  text: "Mampu mengendalikan proses produksi, menghasilkan produk optimal" },
+    { code: "RSC",  text: "Mampu melakukan penelitian ilmiah dengan metodologi tertentu" },
+    { code: "ENG",  text: "Menciptakan sistem kerja/mesin untuk memudahkan aktivitas industri" },
+    { code: "SLS",  text: "Hebat meyakinkan & mempengaruhi orang membeli barang/jasa" },
+    { code: "SRV",  text: "Senang melayani & mendahulukan orang lain" },
+    { code: "STR",  text: "Pandai menempatkan seseorang pada posisi/tugas tertentu" },
+    { code: "PLAN", text: "Mampu melakukan perencanaan jangka panjang" },
+    { code: "MRG",  text: "Gemar mengkombinasikan berbagai ide, obyek menjadi hal baru" },
+    { code: "KEU",  text: "Mampu & pandai mengerjakan tugas keuangan, pembukuan, akuntansi" },
+    { code: "CRW",  text: "Gemar berpikir jauh ke depan, membuka cakrawala baru" }
+  ];
+
+  // Array penampung final (akan di-post ke server saat selesai)
+  let finalChoices = [];
+
+  // Tahap 1: gue_banget
+  let step1Items = [...allItems];  // awalnya semua item
+  // Tahap 2: bukan_gue_banget (akan diisi sisa item dari step1)
+  let step2Items = [];
+  // Tahap 3: gue_juga (akan diisi sisa item dari step2)
+  let step3Items = [];
+  // Tahap 4: bukan_gue (akan diisi sisa item dari step3)
+  let step4Items = [];
+
+  //---------------------------------------
+  // Fungsi umum: generate checkbox list
+  //---------------------------------------
+  function renderItems(containerId, items, counterFunc) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    items.forEach((item, idx) => {
+      const colDiv = document.createElement('div');
+      colDiv.classList.add('col');
+
+      const cardDiv = document.createElement('div');
+      cardDiv.classList.add('card', 'p-3');
+
+      // Checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.classList.add('form-check-input', 'me-2');
+      checkbox.dataset.index = idx;
+
+      // Label
+      const label = document.createElement('label');
+      label.classList.add('form-check-label', 'mb-2');
+      label.textContent = item.text;
+
+      // Event update counter
+      checkbox.addEventListener('change', () => counterFunc(containerId));
+
+      cardDiv.appendChild(checkbox);
+      cardDiv.appendChild(label);
+      colDiv.appendChild(cardDiv);
+      container.appendChild(colDiv);
+    });
+  }
+
+  // Fungsi umum: update counter min 5 / max 7
+  function updateCounter(containerId, counterTextId) {
+    const container = document.getElementById(containerId);
+    const counterText = document.getElementById(counterTextId);
+
+    const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checked.length;
+
+    counterText.textContent = `Tercentang: ${count} / 7`;
+    if (count > 7) {
+      counterText.classList.add('max-reached');
+    } else {
+      counterText.classList.remove('max-reached');
+    }
+    return count;
+  }
+
+  // Step 1 counter
+  function updateCounter1() {
+    return updateCounter('step1Container', 'counterText1');
+  }
+  // Step 2 counter
+  function updateCounter2() {
+    return updateCounter('step2Container', 'counterText2');
+  }
+  // Step 3 counter
+  function updateCounter3() {
+    return updateCounter('step3Container', 'counterText3');
+  }
+  // Step 4 counter
+  function updateCounter4() {
+    return updateCounter('step4Container', 'counterText4');
+  }
+
+  // --------------------------
+  // Render Step 1 (gue_banget)
+  // --------------------------
+  function renderStep1() {
+    renderItems('step1Container', step1Items, updateCounter1);
+  }
+
+  // -----------------------------
+  // Render Step 2 (bukan_gue_banget)
+  // -----------------------------
+  function renderStep2() {
+    renderItems('step2Container', step2Items, updateCounter2);
+  }
+
+  // --------------------------
+  // Render Step 3 (gue_juga)
+  // --------------------------
+  function renderStep3() {
+    renderItems('step3Container', step3Items, updateCounter3);
+  }
+
+  // -----------------------------
+  // Render Step 4 (bukan_gue)
+  // -----------------------------
+  function renderStep4() {
+    renderItems('step4Container', step4Items, updateCounter4);
+  }
+
+  // -----------------------------
+  // Next Button Step 1 → Step 2
+  // -----------------------------
+  document.getElementById('btnStep1Next').addEventListener('click', () => {
+    const container = document.getElementById('step1Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Gue Banget.", "error");
+      return;
+    }
+    if (count > 7) {
+      swal("Error", "Maksimal 7 item boleh dipilih untuk Gue Banget.", "error");
+      return;
+    }
+
+    // Tambah ke finalChoices => category: gue_banget
+    checkedBoxes.forEach(cb => {
+      const idx = parseInt(cb.dataset.index);
+      finalChoices.push({
+        code: step1Items[idx].code,
+        category: 'gue_banget'
+      });
+    });
+
+    // Sisa item untuk step 2
+    step2Items = step1Items.filter((_, i) => {
+      return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+    });
+
+    // Tampilkan Step 2
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    renderStep2();
+  });
+
+  // -----------------------------
+  // Next Button Step 2 → Step 3
+  // -----------------------------
+  document.getElementById('btnStep2Next').addEventListener('click', () => {
+    const container = document.getElementById('step2Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Bukan Gue Banget.", "error");
+      return;
+    }
+    if (count > 7) {
+      swal("Error", "Maksimal 7 item boleh dipilih untuk Bukan Gue Banget.", "error");
+      return;
+    }
+
+    // Tambah ke finalChoices => category: bukan_gue_banget
+    checkedBoxes.forEach(cb => {
+      const idx = parseInt(cb.dataset.index);
+      finalChoices.push({
+        code: step2Items[idx].code,
+        category: 'bukan_gue_banget'
+      });
+    });
+
+    // Sisa item untuk step 3
+    step3Items = step2Items.filter((_, i) => {
+      return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+    });
+
+    // Tampilkan Step 3
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+    renderStep3();
+  });
+
+  // -----------------------------
+  // Next Button Step 3 → Step 4
+  // -----------------------------
+  document.getElementById('btnStep3Next').addEventListener('click', () => {
+    const container = document.getElementById('step3Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Gue Juga.", "error");
+      return;
+    }
+    if (count > 7) {
+      swal("Error", "Maksimal 7 item boleh dipilih untuk Gue Juga.", "error");
+      return;
+    }
+
+    // Tambah ke finalChoices => category: gue_juga
+    checkedBoxes.forEach(cb => {
+      const idx = parseInt(cb.dataset.index);
+      finalChoices.push({
+        code: step3Items[idx].code,
+        category: 'gue_juga'
+      });
+    });
+
+    // Sisa item untuk step 4
+    step4Items = step3Items.filter((_, i) => {
+      return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+    });
+
+    // Tampilkan Step 4
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('step4').classList.add('active');
+    renderStep4();
+  });
+
+  // -----------------------------
+  // Finish Button Step 4
+  // -----------------------------
+  document.getElementById('btnFinish').addEventListener('click', () => {
+    const container = document.getElementById('step4Container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+
+    if (count < 5) {
+      swal("Error", "Minimal 5 item harus dipilih untuk Bukan Gue.", "error");
+      return;
+    }
+    if (count > 7) {
+      swal("Error", "Maksimal 7 item boleh dipilih untuk Bukan Gue.", "error");
+      return;
+    }
+
+    // Masukkan item tercentang => category: 'bukan_gue'
+    checkedBoxes.forEach(cb => {
+      const idx = parseInt(cb.dataset.index);
+      finalChoices.push({
+        code: step4Items[idx].code,
+        category: 'bukan_gue'
+      });
+    });
+
+    // Sisa item => category: 'biasa_aja'
+    const notChecked = step4Items.filter((_, i) => {
+      return ![...checkedBoxes].some(cb => parseInt(cb.dataset.index) === i);
+    });
+    notChecked.forEach(item => {
+      finalChoices.push({
+        code: item.code,
+        category: 'biasa_aja'
+      });
+    });
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('caldera_user_id');
+
+    console.log(token);
+    
+    // Kirim data ke server
+    // Ganti URL sesuai endpoint API Anda
+    axios.post(
+      'https://storage-api.online/api-caldera/public/api/user-choices/' + userId,
+      {choices: finalChoices},
+    )
+    .then(res => {
+      swal("Success", res.data.message, "success")
+      .then(() => {
+        // Contoh reload/redirect
+        window.location.replace("result.html");
+        // window.location.replace("payment.html");
+      });
+    })
+    .catch(err => {
+      let errMsg = "Failed to save choices.";
+      if (err.response && err.response.data) {
+        if (err.response.data.message) {
+          errMsg = err.response.data.message;
+        } else if (err.response.data.errors) {
+          errMsg = Object.values(err.response.data.errors).flat().join("\n");
+        }
+      }
+      swal("Error", errMsg, "error");
+    });
+  });
+
+  // -----------------------------------------------------
+  // Jalankan Step 1 saat halaman dibuka (default active)
+  // -----------------------------------------------------
+  renderStep1();
+</script>
+
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

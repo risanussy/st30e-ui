@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caldera - Register</title>
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+      crossorigin="anonymous"
+    >
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+      crossorigin="anonymous" 
+      referrerpolicy="no-referrer" 
+    />
+    <style>
+      .bg-grad {            
+        background: rgb(14,0,255);
+        background: linear-gradient(
+          90deg,
+          rgba(14,0,255,1) 0%,
+          rgba(10,10,222,1) 35%,
+          rgba(0,212,255,1) 100%
+        );  
+      }
+    </style>
+  </head>
+  <body class="bg-light overflow-hidden" style="width: 100%;overflow-x: hidden;">
+    <div class="row" style="height: 100dvh;">
+      <div class="col-6 bg-grad h-100">
+        <div class="h-100 w-100 d-flex flex-column justify-content-center align-items-center">
+          <h3>
+            <img src="assets/logo.png" alt="logo" class="w-100" style="filter: brightness(0) invert(1);">
+          </h3>
+          <h6 class="text-white">Register first area member</h6>
+        </div>
+      </div>
+      <div class="col-6 h-100 px-5 d-flex align-items-center">
+        <div class="w-100">
+          <form id="registerForm">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" placeholder="xxx@xxx.xxx" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" name="phone" class="form-control" placeholder="08xxx atau +628xxx" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Sosmed</label>
+              <input type="text" name="sosmed" class="form-control" placeholder="Masukan link sosmed anda" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" placeholder="password min. 8 digit" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm Password</label>
+              <input type="password" name="password_confirmation" class="form-control" placeholder="password min. 8 digit" required>
+            </div>
+            <hr>
+            <div class="mb-3">
+              <label class="form-label">Referral Code</label>
+              <input type="text" name="refferal_code" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary mb-3 w-100">Register</button>
+            <a href="index.html" class="btn btn-outline-primary w-100">Back</a>
+          </form>
+          <br>
+          <small>Already have account? <a href="login.html">Login</a></small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- SweetAlert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Bootstrap Bundle -->
+    <script 
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+      crossorigin="anonymous">
+    </script>
+    
+    <script>
+      document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const data = {
+          name: form.name.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          sosmed: form.sosmed.value,
+          password: form.password.value,
+          password_confirmation: form.password_confirmation.value,
+          refferal_code: form.refferal_code.value
+        };
+
+        axios.post('https://storage-api.online/api-caldera/public/api/register', data)
+          .then(function(response) {
+            // Simpan user_id di localStorage jika API mengembalikan 'user_id'
+            if (response.data.user_id) {
+              localStorage.setItem('caldera_user_id', response.data.user_id);
+            }
+
+            swal("Success", response.data.message, "success")
+              .then(function() {
+                // Contoh redirect
+                window.location.replace("details.html");
+              });
+          })
+          .catch(function(error) {
+            let errMsg = "Registration failed";
+            if (error.response && error.response.data) {
+              if (error.response.data.message) {
+                errMsg = error.response.data.message;
+              } else if (error.response.data.errors) {
+                // Menggabungkan semua error message
+                errMsg = Object.values(error.response.data.errors).flat().join("\n");
+              }
+            }
+            swal("Error", errMsg, "error");
+          });
+      });
+    </script>
+  </body>
+</html>

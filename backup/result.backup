@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Report User Choices</title>
+
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <style>
+    /* Styling lingkaran */
+    .circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 1px solid black;
+      color: #fff; /* warna teks default putih */
+      /* Jika background color = putih/kuning, kita bisa atur di JS agar teksnya gelap */
+    }
+
+    .result {
+      width: 595px;
+      height: 687px;
+      background-color: red;
+      background-image: url(assets/bg-result.png);
+      position: relative;
+    }
+
+    .circle-result {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      font-weight: bold;
+      border-radius: 23px;
+      background-color: white;
+      border: 1px solid black;
+    }
+
+    .circle-result-1 {
+      top: 80px;
+      right: 60px;
+    }
+
+    .circle-result-2 {
+      top: 129px;
+      right: 60px;
+    }
+
+    .circle-result-3 {
+      top: 192px;
+      right: 60px;
+    }
+
+    .circle-result-4 {
+      top: 242px;
+      right: 60px;
+    }
+
+    .circle-result-5 {
+      top: 291px;
+      right: 60px;
+    }
+
+    .circle-result-6 {
+      top: 340px;
+      right: 60px;
+    }
+
+    .circle-result-7 {
+      top: 390px;
+      right: 60px;
+    }
+
+    .circle-result-8 {
+      top: 438px;
+      right: 60px;
+    }
+
+    .circle-result-9 {
+      top: 510px;
+      right: 60px;
+    }
+
+    .circle-result-10 {
+      bottom: 82px;
+      right: 60px;
+    }
+
+    .circle-result-11 {
+      bottom: 82px;
+      right: 109px;
+    }
+
+    .circle-result-12 {
+      bottom: 82px;
+      right: 158px;
+    }
+
+    .circle-result-13 {
+      bottom: 82px;
+      right: 207px;
+    }
+
+    .circle-result-14 {
+      bottom: 82px;
+      left: 248px;
+    }
+
+    .circle-result-15 {
+      bottom: 82px;
+      left: 198px;
+    }
+
+    .circle-result-16 {
+      bottom: 82px;
+      left: 149px;
+    }
+
+    .circle-result-17 {
+      bottom: 82px;
+      left: 60px;
+    }
+
+    .circle-result-18 {
+      bottom: 130px;
+      left: 60px;
+    }
+
+    .circle-result-19 {
+      bottom: 180px;
+      left: 60px;
+    }
+
+    .circle-result-20 {
+      bottom: 300px;
+      left: 60px;
+    }
+
+    .circle-result-21 {
+      bottom: 350px;
+      left: 60px;
+    }
+
+    .circle-result-22 {
+      top: 175px;
+      left: 60px;
+    }
+
+    .circle-result-23 {
+      top: 128px;
+      left: 60px;
+    }
+
+    .circle-result-24 {
+      top: 80px;
+      left: 60px;
+    }
+
+    .circle-result-25 {
+      top: 80px;
+      left: 110px;
+    }
+
+    .circle-result-26 {
+      top: 80px;
+      left: 178px;
+    }
+
+    .circle-result-27 {
+      top: 80px;
+      left: 226px;
+    }
+
+    .circle-result-28 {
+      top: 80px;
+      left: 275px;
+    }
+
+    .circle-result-29 {
+      top: 80px;
+      left: 324px;
+    }
+
+    .circle-result-30 {
+      top: 80px;
+      left: 373px;
+    }
+  </style>
+</head>
+<body>
+<div class="container my-5">
+  <h2 class="mb-4">Hasil ST30 Engine</h2>
+  <p>Berikut adalah daftar pilihan user dalam bentuk lingkaran berwarna:</p>
+  <div class="row">
+    <div class="col-6">
+      <div class="result">
+        <div class="circle-result circle-result-1 d-flex align-items-center justify-content-center">
+          CAR
+        </div>
+        <div class="circle-result circle-result-2 d-flex align-items-center justify-content-center">
+          SER
+        </div>
+        <div class="circle-result circle-result-3 d-flex align-items-center justify-content-center">
+          DES
+        </div>
+        <div class="circle-result circle-result-4 d-flex align-items-center justify-content-center">
+          CRE
+        </div>
+        <div class="circle-result circle-result-5 d-flex align-items-center justify-content-center">
+          SYN
+        </div>
+        <div class="circle-result circle-result-6 d-flex align-items-center justify-content-center">
+          MAR
+        </div>
+        <div class="circle-result circle-result-7 d-flex align-items-center justify-content-center">
+          STR
+        </div>
+        <div class="circle-result circle-result-8 d-flex align-items-center justify-content-center">
+          VIS
+        </div>
+        <div class="circle-result circle-result-9 d-flex align-items-center justify-content-center">
+          OPE
+        </div>
+        <div class="circle-result circle-result-10 d-flex align-items-center justify-content-center">
+          DIS
+        </div>
+        <div class="circle-result circle-result-11 d-flex align-items-center justify-content-center">
+          SAF
+        </div>
+        <div class="circle-result circle-result-12 d-flex align-items-center justify-content-center">
+          QCA
+        </div>
+        <div class="circle-result circle-result-13 d-flex align-items-center justify-content-center">
+          PRO
+        </div>
+        <div class="circle-result circle-result-14 d-flex align-items-center justify-content-center">
+          ADM
+        </div>
+        <div class="circle-result circle-result-15 d-flex align-items-center justify-content-center">
+          INT
+        </div>
+        <div class="circle-result circle-result-16 d-flex align-items-center justify-content-center">
+          JOU
+        </div>
+        <div class="circle-result circle-result-17 d-flex align-items-center justify-content-center">
+          EXP
+        </div>
+        <div class="circle-result circle-result-18 d-flex align-items-center justify-content-center">
+          RES
+        </div>
+        <div class="circle-result circle-result-19 d-flex align-items-center justify-content-center">
+          EVA
+        </div>
+        <div class="circle-result circle-result-20 d-flex align-items-center justify-content-center">
+          TRE
+        </div>
+        <div class="circle-result circle-result-21 d-flex align-items-center justify-content-center">
+          ANA
+        </div>
+        <div class="circle-result circle-result-22 d-flex align-items-center justify-content-center">
+          EDU
+        </div>
+        <div class="circle-result circle-result-23 d-flex align-items-center justify-content-center">
+          MOT
+        </div>
+        <div class="circle-result circle-result-24 d-flex align-items-center justify-content-center">
+          AMB
+        </div>
+        <div class="circle-result circle-result-25 d-flex align-items-center justify-content-center">
+          COM
+        </div>
+        <div class="circle-result circle-result-26 d-flex align-items-center justify-content-center">
+          ARR
+        </div>
+        <div class="circle-result circle-result-27 d-flex align-items-center justify-content-center">
+          CMD
+        </div>
+        <div class="circle-result circle-result-28 d-flex align-items-center justify-content-center">
+          MED
+        </div>
+        <div class="circle-result circle-result-29 d-flex align-items-center justify-content-center">
+          SEL
+        </div>
+        <div class="circle-result circle-result-30 d-flex align-items-center justify-content-center">
+          SLC
+        </div>
+      </div>
+    </div>
+    <div class="col-6 info">
+      <!-- Kontainer tempat menampilkan circle -->
+      <div id="circlesContainer" class="d-none">
+      </div>
+    </div>
+  </div>
+  <h6>Penjelasan hasil testmu akan dikirim melalui Whatsapp & Email</h6>
+  <div class="row">
+    <div class="col-6">
+      <a href="payment.html?harga=100000" class="btn btn-lg btn-outline-primary w-100 mt-3">Tanpa Konsultasi</a>
+    </div>
+    <div class="col-6">
+      <a href="payment.html?harga=250000" class="btn btn-lg btn-primary w-100 mt-3">Dengan Konsultasi</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Panggil endpoint API (sesuaikan URL dengan yang Anda miliki)
+  const userId = localStorage.getItem('caldera_user_id');
+  axios.get('https://storage-api.online/api-caldera/public/api/user-choices/report/' + userId)
+    .then(function(response) {
+      const data = response.data.data; // Array data dari API
+
+      // Pilih semua elemen circle-result yang ada di dalam container .result
+      const staticCircles = document.querySelectorAll('.result .circle-result');
+
+      staticCircles.forEach(circle => {
+        // Ambil kode dari teks dalam circle (misalnya "CAR", "SER", dll)
+        const code = circle.textContent.trim();
+        
+        // Cari item yang sesuai berdasarkan code
+        const item = data.find(obj => obj.code === code);
+        
+        // Jika ditemukan, update warna latar dan teks
+        if (item) {
+          circle.style.backgroundColor = item.color;
+          // Jika background putih atau kuning, ubah teks menjadi hitam
+          if (item.color.toLowerCase() === 'yellow' || item.color.toLowerCase() === 'white') {
+            circle.style.color = '#000';
+          } else {
+            circle.style.color = '#fff';
+          }
+        }
+      });
+    })
+    .catch(function(error) {
+      console.error(error);
+      alert('Terjadi kesalahan saat memuat data report.');
+    });
+</script>
+
+
+<!-- Bootstrap Bundle (untuk komponen interaktif) -->
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+</body>
+</html>

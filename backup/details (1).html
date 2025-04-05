@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Caldera - User Detail</title>
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet"
+  >
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- SweetAlert (opsional) -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <style>
+    .bg-grad {            
+      background: rgb(14,0,255);
+      background: linear-gradient(
+        90deg,
+        rgba(14,0,255,1) 0%,
+        rgba(10,10,222,1) 35%,
+        rgba(0,212,255,1) 100%
+      );  
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="row" style="height: 100dvh;">
+    <div class="col-6 bg-grad h-100">
+      <div class="h-100 w-100 d-flex flex-column justify-content-center align-items-center">
+        <h3>
+          <img src="assets/logo.png" alt="logo" class="w-100" style="filter: brightness(0) invert(1);">
+        </h3>
+        <h6 class="text-white">Add details information member</h6>
+      </div>
+    </div>
+    <div class="col-6 h-100 px-5 d-flex align-items-center">
+      <div class="w-100">
+        <h2 class="mb-3">Lengkapi Data User Detail</h2>
+        <form id="userDetailForm">
+          <!-- TTL -->
+          <div class="mb-3">
+            <label class="form-label">Tempat Lahir</label>
+            <input type="text" class="form-control" id="birth_place" placeholder="Jakarta / Surabaya / ..." />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tanggal Lahir</label>
+            <input type="date" class="form-control" id="birth_date" />
+          </div>
+          <!-- Kota Domisili -->
+          <form id="userDetailForm">
+            <!-- Kota Domisili -->
+            <div class="mb-3">
+              <label class="form-label">Kota Domisili</label>
+              <select class="form-select" id="city_domicile">
+                <option value="">Pilih Kota Domisili</option>
+                <option value="Jakarta">Jakarta</option>
+                <option value="Bandung">Bandung</option>
+                <option value="Surabaya">Surabaya</option>
+                <option value="Medan">Medan</option>
+                <option value="Semarang">Semarang</option>
+                <option value="Makassar">Makassar</option>
+                <option value="Palembang">Palembang</option>
+                <option value="Denpasar">Denpasar</option>
+                <option value="Yogyakarta">Yogyakarta</option>
+                <option value="Malang">Malang</option>
+                <option value="Bogor">Bogor</option>
+                <option value="Tangerang">Tangerang</option>
+                <option value="Bekasi">Bekasi</option>
+                <option value="Depok">Depok</option>
+                <option value="Cimahi">Cimahi</option>
+                <option value="Pekanbaru">Pekanbaru</option>
+                <option value="Padang">Padang</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          <!-- <div class="mb-3">
+            <label class="form-label">Kota Domisili</label>
+            <select class="form-select" id="city_domicile">
+              <option value="">Pilih Kota Domisili</option>
+              <option value="Jakarta">Jakarta</option>
+              <option value="Bandung">Bandung</option>
+              <option value="Surabaya">Surabaya</option>
+              <option value="Medan">Medan</option>
+              <option value="Semarang">Semarang</option>
+              <option value="Makassar">Makassar</option>
+              <option value="Palembang">Palembang</option>
+              <option value="Denpasar">Denpasar</option>
+              <option value="Yogyakarta">Yogyakarta</option>
+              <option value="Malang">Malang</option>
+              <option value="Bogor">Bogor</option>
+              <option value="Tangerang">Tangerang</option>
+              <option value="Bekasi">Bekasi</option>
+              <option value="Depok">Depok</option>
+              <option value="Cimahi">Cimahi</option>
+              <option value="Pekanbaru">Pekanbaru</option>
+              <option value="Padang">Padang</option>
+              <option value="Balikpapan">Balikpapan</option>
+              <option value="Samarinda">Samarinda</option>
+              <option value="Manado">Manado</option>
+              <option value="Kupang">Kupang</option>
+              <option value="Pontianak">Pontianak</option>
+              <option value="Banjarmasin">Banjarmasin</option>
+              <option value="Mataram">Mataram</option>
+              <option value="Ambon">Ambon</option>
+              <option value="Jambi">Jambi</option>
+              <option value="Bandar Lampung">Bandar Lampung</option>
+              <option value="Palu">Palu</option>
+              <option value="Bengkulu">Bengkulu</option>
+              <option value="Cirebon">Cirebon</option>
+              <option value="Tasikmalaya">Tasikmalaya</option>
+              <option value="Sukabumi">Sukabumi</option>
+              <option value="Serang">Serang</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div> -->
+          <!-- Apakah Mahasiswa? -->
+          <div class="mb-3">
+            <label class="form-label">Apakah Anda Mahasiswa?</label>
+            <select class="form-select" id="is_student">
+              <option value="0">Bukan Mahasiswa</option>
+              <option value="1">Mahasiswa</option>
+            </select>
+          </div>
+             <!-- Nama Kampus -->
+          <div class="mb-3">
+            <label class="form-label">Nama Kampus</label>
+            <select class="form-select" id="campus_name">
+              <option value="">Pilih Nama Kampus</option>
+              <option value="Universitas Indonesia">Universitas Indonesia (UI)</option>
+              <option value="Institut Teknologi Bandung">Institut Teknologi Bandung (ITB)</option>
+              <option value="Universitas Gadjah Mada">Universitas Gadjah Mada (UGM)</option>
+              <option value="Universitas Airlangga">Universitas Airlangga (UNAIR)</option>
+              <option value="Institut Pertanian Bogor">Institut Pertanian Bogor (IPB)</option>
+              <option value="Universitas Padjadjaran">Universitas Padjadjaran (UNPAD)</option>
+              <option value="Universitas Brawijaya">Universitas Brawijaya (UB)</option>
+              <option value="Universitas Sebelas Maret">Universitas Sebelas Maret (UNS)</option>
+              <option value="Institut Teknologi Sepuluh Nopember">Institut Teknologi Sepuluh Nopember (ITS)</option>
+              <option value="Universitas Hasanuddin">Universitas Hasanuddin (UNHAS)</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary mt-3">Simpan Detail</button>
+        </form>
+         <!-- Field Kampus (hanya muncul jika Mahasiswa) -->
+          <!-- <div id="kampusFields" class="hidden">
+            <div class="mb-3">
+              <label class="form-label">Nama Kampus</label>
+              <select class="form-select" id="campus_name">
+                <option value="">Pilih Nama Kampus</option>
+                <option value="Universitas Indonesia">Universitas Indonesia (UI)</option>
+                <option value="Institut Teknologi Bandung">Institut Teknologi Bandung (ITB)</option>
+                <option value="Universitas Gadjah Mada">Universitas Gadjah Mada (UGM)</option>
+                <option value="Universitas Airlangga">Universitas Airlangga (UNAIR)</option>
+                <option value="Universitas Diponegoro">Universitas Diponegoro (UNDIP)</option>
+                <option value="Institut Pertanian Bogor">Institut Pertanian Bogor (IPB)</option>
+                <option value="Universitas Padjadjaran">Universitas Padjadjaran (UNPAD)</option>
+                <option value="Universitas Brawijaya">Universitas Brawijaya (UB)</option>
+                <option value="Universitas Sebelas Maret">Universitas Sebelas Maret (UNS)</option>
+                <option value="Universitas Negeri Yogyakarta">Universitas Negeri Yogyakarta (UNY)</option>
+                <option value="Universitas Sumatera Utara">Universitas Sumatera Utara (USU)</option>
+                <option value="Universitas Hasanuddin">Universitas Hasanuddin (UNHAS)</option>
+                <option value="Universitas Andalas">Universitas Andalas (UNAND)</option>
+                <option value="Universitas Negeri Jakarta">Universitas Negeri Jakarta (UNJ)</option>
+                <option value="Universitas Udayana">Universitas Udayana (UNUD)</option>
+                <option value="Universitas Riau">Universitas Riau (UNRI)</option>
+                <option value="Universitas Sriwijaya">Universitas Sriwijaya (UNSRI)</option>
+                <option value="Institut Teknologi Sepuluh Nopember">Institut Teknologi Sepuluh Nopember (ITS)</option>
+                <option value="Universitas Lampung">Universitas Lampung (UNILA)</option>
+                <option value="Universitas Negeri Malang">Universitas Negeri Malang (UM)</option>
+                <option value="Universitas Syiah Kuala">Universitas Syiah Kuala (UNSYIAH)</option>
+                <option value="Universitas Jember">Universitas Jember (UNEJ)</option>
+                <option value="Universitas Mataram">Universitas Mataram (UNRAM)</option>
+                <option value="Universitas Merdeka Malang">Universitas Merdeka Malang (UMM)</option>
+                <option value="Universitas Sam Ratulangi">Universitas Sam Ratulangi (Unsrat)</option>
+                <option value="Universitas Tadulako">Universitas Tadulako (UNTAD)</option>
+                <option value="Universitas Pattimura">Universitas Pattimura (UNPATTI)</option>
+                <option value="Universitas Lambung Mangkurat">Universitas Lambung Mangkurat (ULM)</option>
+                <option value="Universitas Negeri Makassar">Universitas Negeri Makassar (UNM)</option>
+                <option value="Universitas Sultan Ageng Tirtayasa">Universitas Sultan Ageng Tirtayasa (UNTIRTA)</option>
+                <option value="Universitas Islam Indonesia">Universitas Islam Indonesia (UII)</option>
+                <option value="Universitas Muhammadiyah Yogyakarta">Universitas Muhammadiyah Yogyakarta (UMY)</option>
+                <option value="Universitas Ahmad Dahlan">Universitas Ahmad Dahlan (UAD)</option>
+                <option value="Universitas Islam Negeri Sunan Kalijaga">Universitas Islam Negeri Sunan Kalijaga</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div> -->
+            <div class="mb-3">
+              <label class="form-label">Semester</label>
+              <input type="number" class="form-control" id="semester" placeholder="5" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Jurusan</label>
+              <select class="form-select" id="major">
+                <option value="">Pilih Jurusan</option>
+                <option value="Teknik Informatika">Teknik Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+                <option value="Manajemen">Manajemen</option>
+                <option value="Ekonomi">Ekonomi</option>
+                <option value="Hukum">Hukum</option>
+                <option value="Kedokteran">Kedokteran</option>
+                <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                <option value="Arsitektur">Arsitektur</option>
+                <option value="Psikologi">Psikologi</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+          <!-- Field Pekerjaan (hanya muncul jika bukan mahasiswa) -->
+          <div id="pekerjaanFields" class="hidden">
+            <div class="mb-3">
+              <label class="form-label">Apakah Bekerja?</label>
+              <select class="form-select" id="is_bekerja">
+                <option value="0">Tidak Bekerja</option>
+                <option value="1">Bekerja</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Pendidikan Terakhir</label>
+              <select class="form-select" id="last_education">
+                <option value="">Pilih Pendidikan Terakhir</option>
+                <option value="SMP">SMP</option>
+                <option value="SMA">SMA</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+                <option value="S1">S1</option>
+                <option value="S2">S2</option>
+                <option value="S3">S3</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Simpan Detail</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      document.getElementById('userDetailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const userId = localStorage.getItem('caldera_user_id');
+      if (!userId) {
+        alert("User ID tidak ditemukan. Silakan register terlebih dahulu.");
+        return;
+      }
+
+      const data = {
+        user_id: userId,
+        city_domicile: document.getElementById('city_domicile').value,
+        campus_name: document.getElementById('campus_name').value
+      };
+
+      axios.post('https://storage-api.online/api-caldera/public/api/user-details', data)
+        .then(function(response) {
+          console.log(response.data);
+          swal("Success", "User detail berhasil disimpan", "success")
+            .then(() => {          
+              window.location.replace("test.html");
+            });
+        })
+        .catch(function(error) {
+          let errMsg = "Gagal menyimpan user detail";
+          if (error.response && error.response.data) {
+            if (error.response.data.message) {
+              errMsg = error.response.data.message;
+            } else if (error.response.data.errors) {
+              errMsg = Object.values(error.response.data.errors).flat().join("\n");
+            }
+          }
+          swal("Error", errMsg, "error");
+        });
+    });
+
+    // Dapatkan user_id dari localStorage
+    // const userId = localStorage.getItem('caldera_user_id');
+    // if (!userId) {
+    //   alert("User ID tidak ditemukan. Silakan register terlebih dahulu.");
+      // Anda bisa redirect ke halaman register, misal:
+      // window.location.replace("register.html");
+    // }
+
+    // const isStudentSelect = document.getElementById('is_student');
+    // const kampusFields = document.getElementById('kampusFields');
+    // const pekerjaanFields = document.getElementById('pekerjaanFields');
+
+    // Fungsi untuk menampilkan atau menyembunyikan field berdasarkan pilihan mahasiswa
+    // function toggleFields() {
+    //   const val = isStudentSelect.value;
+    //   if (val === "1") {
+        // Jika Mahasiswa, tampilkan field kampus dan sembunyikan field pekerjaan
+      //   kampusFields.classList.remove('hidden');
+      //   pekerjaanFields.classList.add('hidden');
+      // } else {
+        // Jika bukan mahasiswa, tampilkan field pekerjaan dan sembunyikan field kampus
+    //     kampusFields.classList.add('hidden');
+    //     pekerjaanFields.classList.remove('hidden');
+    //   }
+    // }
+
+    // Event: ketika user mengubah pilihan "is_student"
+    // isStudentSelect.addEventListener('change', toggleFields);
+    // Panggil toggleFields saat pertama kali untuk menyesuaikan tampilan default
+    // toggleFields();
+
+    // Penanganan submit form
+    // document.getElementById('userDetailForm').addEventListener('submit', function(e) {
+    //   e.preventDefault();
+
+      // Kumpulkan data dari form
+      // const data = {
+      //   user_id: userId,
+      //   birth_place: document.getElementById('birth_place').value,
+      //   birth_date: document.getElementById('birth_date').value,
+      //   city_domicile: document.getElementById('city_domicile').value,
+      //   is_student: (document.getElementById('is_student').value === "1"),
+      //   campus_name: document.getElementById('campus_name').value,
+      //   semester: document.getElementById('semester').value,
+      //   major: document.getElementById('major').value,
+      //   is_bekerja: (document.getElementById('is_bekerja').value === "1"),
+      //   last_education: document.getElementById('last_education').value
+      // };
+
+      // Kirim data ke endpoint user-details (POST)
+    //   axios.post('https://storage-api.online/api-caldera/public/api/user-details', data)
+    //     .then(function(response) {
+    //       console.log(response.data);
+    //       swal("Success", "User detail berhasil disimpan", "success")
+    //         .then(() => {          
+    //           window.location.replace("test.html");
+    //         });
+    //     })
+    //     .catch(function(error) {
+    //       let errMsg = "Gagal menyimpan user detail";
+    //       if (error.response && error.response.data) {
+    //         if (error.response.data.message) {
+    //           errMsg = error.response.data.message;
+    //         } else if (error.response.data.errors) {
+    //           errMsg = Object.values(error.response.data.errors).flat().join("\n");
+    //         }
+    //       }
+    //       swal("Error", errMsg, "error");
+    //     });
+    // });
+  </script>
+</body>
+</html>
