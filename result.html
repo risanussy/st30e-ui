@@ -486,9 +486,9 @@
                 'g-recaptcha-response': 'dummy_captcha_token'
               }
             };
-            // axios.post('https://api.emailjs.com/api/v1.0/email/send', dataEmail)
-            //   .then(() => console.log("Email terkirim via EmailJS"))
-            //   .catch(err => console.error("Gagal kirim email:", err));
+            axios.post('https://api.emailjs.com/api/v1.0/email/send', dataEmail)
+              .then(() => console.log("Email terkirim via EmailJS"))
+              .catch(err => console.error("Gagal kirim email:", err));
           })
           .catch((error) => {
             console.error(error);
